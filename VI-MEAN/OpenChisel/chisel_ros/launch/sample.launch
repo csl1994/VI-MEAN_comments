@@ -1,0 +1,40 @@
+<launch>
+    <machine name="local" address="localhost" default="true"/>
+
+
+    <!-- node name="Chisel" pkg="chisel_ros" type="ChiselNode" output="screen" launch-prefix="taskset -c 0,1" -->
+    <node name="Chisel" pkg="chisel_ros" type="ChiselNode" output="screen" >
+        <!-- 每个chunk由x*y*z个体素组成 -->
+        <param name="chunk_size_x" value="8"/>
+        <param name="chunk_size_y" value="8"/>
+        <param name="chunk_size_z" value="8"/>
+        <!-- ？？ -->
+        <param name="truncation_scale" value="2"/>
+        <param name="integration_weight" value="1.0"/>
+        <!-- 空间雕刻 -->
+        <param name="use_voxel_carving" value="true"/>
+        <!-- 色彩信息 -->
+        <param name="use_color" value="true"/>
+        <!-- 雕刻距离，代码中更新和雕刻只会执行一个 -->
+        <param name="carving_dist_m" value="0.00"/>
+        <!-- 体素大小 -->
+        <param name="voxel_resolution_m" value="0.1"/>
+        <!-- 视锥远面近面 -->
+        <param name="far_plane_dist" value="5.0"/>
+        <param name="near_plane_dist" value="0.3"/>
+        <!-- 坐标系变换 -->
+        <param name="base_transform" value="/base"/>
+        <param name="depth_image_transform" value="/ref_frame"/>
+        <param name="color_image_transform" value="/ref_frame"/>
+        <!-- 两种，DepthImage和PointCloud -->
+        <param name="fusion_mode" value="DepthImage"/>
+        <!-- 图像和内参 -->
+        <remap from="/depth_image" to="/stereo_mapper/depth/image_raw"/>
+        <remap from="/depth_camera_info" to="/stereo_mapper/depth/image_info"/>
+        <remap from="/color_image" to="/stereo_mapper/rgb/image_raw"/>
+        <remap from="/color_camera_info" to="/stereo_mapper/rgb/image_info"/>
+        <!-- 点云，在stereo_mapper_node中发布，frame_id为ref_frame -->
+        <remap from="/camera/depth_registered/points" to="/stereo_mapper/point_cloud2"/>
+
+    </node>
+</launch>
